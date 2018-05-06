@@ -46,13 +46,6 @@ public class UserController {
 	}
 	
 	
-	public boolean filed (User user,Predicate<User> t){
-		List<User> list = new ArrayList<User>();
-		list.parallelStream();
-		
-		return t.test(user);
-	}
-	
 	
 	/**
 	 * 用户登出的方法
