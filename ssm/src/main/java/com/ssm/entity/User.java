@@ -6,40 +6,32 @@ public class User implements Serializable{
     private static final long serialVersionUID = 1L;
     
     private String id;
-	
-	private String name;
-	
-	private String password;
-	
+	private String userName;
+	private String userSex;
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getName() {
-		return name;
+	public String getUserName() {
+		return userName;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-
-	public String getPassword() {
-		return password;
+	public String getUserSex() {
+		return userSex;
 	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUserSex(String userSex) {
+		this.userSex = userSex;
 	}
-
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", password=" + password + "]";
+		return "User [id=" + id + ", userName=" + userName + ", userSex=" + userSex + "]";
 	}
-    
+	
+
 	
 	
 	
