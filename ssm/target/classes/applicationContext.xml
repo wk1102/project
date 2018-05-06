@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:tx="http://www.springframework.org/schema/tx"  
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">  
+       
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+	    <property name="locations"> <!-- PropertyPlaceholderConfigurer类中有个locations属性，接收的是一个数组，即我们可以在下面配好多个properties文件 -->  
+	        <array>  
+	            <value>classpath:jdbc.properties</value>  
+	        </array>  
+	    </property>  
+	</bean>
+    <!-- 配置数据来源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+        <property name="driverClassName" value="${driver}" />  
+        <property name="url" value="${url}" />  
+        <property name="username" value="${username}" />  
+        <property name="password" value="${password}" />  
+    </bean>  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource"></property>  
+        <!--mybatis的配置文件-->  
+        <!--  <property name="configLocation" value="classpath:mybatis-config.xml" />   -->
+        <!--扫描 XXXmapper.xml映射文件,配置扫描的路径-->  
+        <property name="mapperLocations" value="classpath:com/ssm/mapper/*.xml"></property>  
+    </bean>   
+     <!-- DAO接口所在包名，Spring会自动查找之中的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.ssm.dao" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>  
+    </bean>
+     <!--事务管理-->  
+    <bean id="transactionManager"  
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <!--注入dataSource-->  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+    <!--开启事务注解扫描-->  
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>       
+    
+   <!-- shiro 配置 -->
+   
+   
+    <!-- -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManager"/>
+        <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
+        <property name="sessionMode" value="native"/>
+        <property name="realm" ref="jdbcRealm"/>
+    </bean>
+
+    <!-- 2. 配置CacheManager
+         2.1 需要加入ehcache的jar 及 配置文件
+     -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+
+    <!-- 配置Realm 
+         直接配置实现了realm接口的bean
+    -->
+    <bean id="jdbcRealm" class="com.ssm.shiro.MyRealm"></bean>
+
+    
+    <!-- 可以自动的来调用配置在 spring IOC 容器中  shiro bean的生命周期方法-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- 启用shiro的注解, 紧在配置了lifecycleBeanPostProcessor 生命周期bean后处理器之后使用  -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+
+    <!--配置shireFilter
+        id的值必须和web.xml文件的 DelegatingFileterProxy 的 <filter-name> 一致
+     -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/user/login"/>
+        <property name="successUrl" value="/jsp/index.jsp"/>
+        <property name="unauthorizedUrl" value="/jsp/unauthorized.jsp"/>
+        <!-- 配置哪些页面需要受保护 -->
+        <property name="filterChainDefinitions">
+            <value>
+                /user/login = anon
+                
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+</beans>
