@@ -6,6 +6,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Resource;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,11 +36,12 @@ public class UserController {
 	}
 	
 	/**
-	 * ��ת����¼ҳ��
+	 * 用户的登陆方法
 	 * @return
 	 */
 	@RequestMapping("login")
 	public String login(){
+		
 		return "login";
 	}
 	
@@ -50,6 +53,19 @@ public class UserController {
 		return t.test(user);
 	}
 	
+	
+	/**
+	 * 用户登出的方法
+	 * @return
+	 */
+	@RequestMapping("logout")
+	public String logout () {
+		//调用shiro的获取subject的方法
+		Subject subject = SecurityUtils.getSubject();
+		//调用shiro的登出的方法
+		subject.logout();
+		return "login";
+	}
 	
 	
 }
