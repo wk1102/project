@@ -5,10 +5,20 @@
 <mapper namespace="com.ssm.dao.UserDao">
 
 
- <select id="queryUserList" resultType="com.ssm.entity.User">
- 	select * from user
+ <select id="insert" parameterType="com.ssm.entity.User">
+ 	insert into user (id,userName,password,createTime) values(
+ 	#{id},#{userName},#{password},#{createTime})
  </select>
- <select id="findOne" parameterType="com.ssm.entity.User" resultType="com.ssm.entity.User">
- 	select * from user where id =#{id} and name = #{name}
+ <select id="findOneByName" resultType="com.ssm.entity.User">
+ 	select * from user where userName =#{userName} 
+ </select>
+ <select id="userIsNull" parameterType="string" resultType="int">
+ 	select count(*) from user where userName = #{userName}
+ </select>
+ <select id="emailIsNull" parameterType="string" resultType="int">
+    select count(*) from user where userEmail = #{userName}
+ </select>
+ <select id="findOneByEmail" resultType="com.ssm.entity.User">
+ 	select * from user where userEmail = #{email} 
  </select>
 </mapper>

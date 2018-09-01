@@ -7,9 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-用户名:<input type="text" />
-密码   :<input type="password" />
+<form action="login"  method="post">
+用户名:<input name ="userName" type="text" />
+密码   :<input name = "password" type="password" />
 <input type="submit" value="提交">
+</form>
 </body>
 </html>
